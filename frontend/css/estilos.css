@@ -1,0 +1,9 @@
+/* Estilos propios, complementarios a Bootstrap 5 (CDN). */
+
+body {
+    min-height: 100vh;
+}
+
+#vista-grid .card {
+    height: 100%;
+}

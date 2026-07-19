@@ -1,0 +1,50 @@
+plugins {
+    id 'java'
+    id 'application'
+    id 'com.gradleup.shadow' version '9.0.0'
+}
+
+group = 'edu.pucmm.eventosacademicos'
+version = '1.0-SNAPSHOT'
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(25)
+    }
+}
+
+application {
+    mainClass = 'edu.pucmm.eventosacademicos.Main'
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    // Framework web (PDF pide Javalin 7.0.X; se fija 7.2.2 -- ver README).
+    // API REST pura -- el frontend es estático e independiente (ver /frontend),
+    // por eso no hay dependencia de un motor de plantillas (Thymeleaf, etc).
+    implementation("io.javalin:javalin:7.2.2")
+    implementation("org.slf4j:slf4j-simple:2.0.17")
+
+    // ORM / JPA / Hibernate
+    implementation("org.hibernate.orm:hibernate-core:6.6.4.Final")
+    implementation("jakarta.persistence:jakarta.persistence-api:3.1.0")
+
+    // Base de datos H2 en modo servidor TCP
+    implementation("com.h2database:h2:2.3.232")
+
+    // Hash de contraseñas
+    implementation("org.mindrot:jbcrypt:0.4")
+
+    // Generación de códigos QR (servidor)
+    implementation("com.google.zxing:core:3.5.3")
+    implementation("com.google.zxing:javase:3.5.3")
+}
+
+shadowJar {
+    archiveBaseName.set('app')
+    archiveClassifier.set('')
+    archiveVersion.set('')
+}
