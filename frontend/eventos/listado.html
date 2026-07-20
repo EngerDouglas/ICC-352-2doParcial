@@ -27,7 +27,6 @@
         <button type="button" class="btn btn-outline-secondary" id="btn-vista-lista">Lista</button>
         <button type="button" class="btn btn-outline-secondary" id="btn-vista-grid">Tarjetas</button>
     </div>
-    <!-- TODO: poblar ambas vistas vía fetch a /api/eventos (ver js/eventos.js) -->
     <div id="vista-lista">
         <table class="table">
             <thead><tr><th>Título</th><th>Fecha</th><th>Lugar</th><th>Cupo</th><th></th></tr></thead>
@@ -35,7 +34,6 @@
         </table>
     </div>
     <div id="vista-grid" class="d-none" style="display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:1rem;">
-        <!-- TODO: tarjetas de evento generadas dinámicamente -->
     </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>

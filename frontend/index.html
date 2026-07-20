@@ -17,14 +17,33 @@
         <div class="collapse navbar-collapse" id="navbarNav">
             <ul class="navbar-nav ms-auto">
                 <li class="nav-item"><a class="nav-link" href="/eventos/listado.html">Eventos</a></li>
-                <!-- TODO: mostrar enlaces según sesión/rol (mis inscripciones, organizador, admin, login/logout) -->
             </ul>
         </div>
     </div>
 </nav>
 <main class="container my-4">
-    <h1>Sistema de Gestión y Control de Eventos Académicos</h1>
-    <!-- TODO: presentación general + enlace a eventos/listado.html -->
+    <div class="p-5 mb-4 bg-light rounded-3 text-center">
+        <h1 class="display-5">Sistema de Gestión y Control de Eventos Académicos</h1>
+        <p class="lead mt-3">
+            Descubre charlas, talleres, seminarios y congresos. Inscríbete en línea,
+            recibe tu código QR y regístrate al llegar con un simple escaneo.
+        </p>
+        <a href="/eventos/listado.html" class="btn btn-primary btn-lg mt-2">Ver eventos disponibles</a>
+    </div>
+    <div class="row text-center g-4">
+        <div class="col-md-4">
+            <h2 class="h5">Inscripción en línea</h2>
+            <p>Reserva tu cupo en los eventos publicados con un solo clic.</p>
+        </div>
+        <div class="col-md-4">
+            <h2 class="h5">Código QR personal</h2>
+            <p>Cada inscripción genera un código QR único para validar tu asistencia.</p>
+        </div>
+        <div class="col-md-4">
+            <h2 class="h5">Estadísticas para organizadores</h2>
+            <p>Los organizadores ven inscripciones y asistencia de sus eventos en tiempo real.</p>
+        </div>
+    </div>
 </main>
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 <script src="/js/config.js"></script>

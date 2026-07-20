@@ -24,13 +24,11 @@
 </nav>
 <main class="container my-4">
     <h1>Resumen del evento</h1>
-    <!-- El id del evento se lee de la query string: panel.html?id=123 -->
     <div class="row mb-4">
         <div class="col"><div class="card"><div class="card-body"><h5>Total inscritos</h5><p id="total-inscritos">-</p></div></div></div>
         <div class="col"><div class="card"><div class="card-body"><h5>Total asistentes</h5><p id="total-asistentes">-</p></div></div></div>
         <div class="col"><div class="card"><div class="card-body"><h5>% de asistencia</h5><p id="porcentaje-asistencia">-</p></div></div></div>
     </div>
-    <!-- TODO: fetch GET /api/eventos/{id}/estadisticas y poblar tarjetas + gráficos -->
     <canvas id="grafico-inscripciones-por-dia"></canvas>
     <canvas id="grafico-asistencia-por-hora"></canvas>
 </main>
