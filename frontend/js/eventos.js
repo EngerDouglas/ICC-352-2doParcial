@@ -117,7 +117,162 @@ function iniciarDetalleEvento() {
     })();
 }
 
+function iniciarMisEventos() {
+    const cuerpoTabla = document.querySelector('#tabla-mis-eventos-body');
+    if (!cuerpoTabla) return;
+
+    const badgesEstado = {
+        BORRADOR: 'bg-secondary',
+        PUBLICADO: 'bg-success',
+        CANCELADO: 'bg-danger',
+    };
+
+    async function accionEvento(id, accion, confirmacion) {
+        if (confirmacion && !window.confirm(confirmacion)) return;
+        try {
+            await api(`/api/organizador/eventos/${id}/${accion}`, { method: 'POST' });
+            await cargar();
+        } catch (e) {
+            alerta('main', 'danger', e.message);
+        }
+    }
+
+    function botonAccion(texto, clase, onclick) {
+        return el('button', { class: `btn btn-sm ${clase} me-1`, type: 'button', onclick }, texto);
+    }
+
+    function filaMiEvento(evento) {
+        const acciones = el('td', {});
+        if (evento.estado === 'BORRADOR') {
+            acciones.append(
+                el('a', { class: 'btn btn-sm btn-outline-primary me-1', href: `/eventos/formulario.html?id=${evento.id}` }, 'Editar'),
+                botonAccion('Publicar', 'btn-success',
+                    () => accionEvento(evento.id, 'publicar', null)),
+            );
+        } else if (evento.estado === 'PUBLICADO') {
+            acciones.append(
+                botonAccion('Despublicar', 'btn-outline-secondary',
+                    () => accionEvento(evento.id, 'despublicar',
+                        '¿Despublicar este evento? Dejará de ser visible para los participantes.')),
+                botonAccion('Cancelar', 'btn-outline-danger',
+                    () => accionEvento(evento.id, 'cancelar',
+                        '¿Cancelar este evento? Esta acción no se puede deshacer.')),
+                el('a', { class: 'btn btn-sm btn-outline-primary me-1', href: `/estadisticas/panel.html?id=${evento.id}` }, 'Estadísticas'),
+                el('a', { class: 'btn btn-sm btn-outline-primary me-1', href: `/asistencia/escaner.html?id=${evento.id}` }, 'Escáner'),
+            );
+        }
+        return el('tr', {},
+            el('td', {}, evento.titulo),
+            el('td', {}, el('span', { class: `badge ${badgesEstado[evento.estado] || 'bg-secondary'}` }, evento.estado)),
+            el('td', {}, fmtFecha(evento.fechaHora)),
+            acciones,
+        );
+    }
+
+    async function cargar() {
+        try {
+            const eventos = await api('/api/organizador/eventos') || [];
+            if (eventos.length === 0) {
+                cuerpoTabla.replaceChildren(el('tr', {},
+                    el('td', { colspan: '4', class: 'text-center text-muted' },
+                        'Todavía no has creado ningún evento.')));
+                return;
+            }
+            cuerpoTabla.replaceChildren(...eventos.map(filaMiEvento));
+        } catch (e) {
+            alerta('main', 'danger', e.message);
+        }
+    }
+
+    (async () => {
+        const usuario = await requerirSesion(['ORGANIZADOR', 'ADMINISTRADOR']);
+        if (usuario) await cargar();
+    })();
+}
+
+function iniciarFormularioEvento() {
+    const formulario = document.querySelector('#form-evento');
+    if (!formulario) return;
+
+    const idEdicion = qs('id');
+
+    (async () => {
+        const usuario = await requerirSesion(['ORGANIZADOR', 'ADMINISTRADOR']);
+        if (!usuario) return;
+
+        if (idEdicion) {
+            try {
+                const eventos = await api('/api/organizador/eventos') || [];
+                const evento = eventos.find((e) => String(e.id) === idEdicion);
+                if (!evento) {
+                    alerta('main', 'warning', 'El evento no existe o no le pertenece.');
+                    formulario.classList.add('d-none');
+                    return;
+                }
+                formulario.titulo.value = evento.titulo;
+                formulario.descripcion.value = evento.descripcion || '';
+                formulario.fechaHora.value = (evento.fechaHora || '').slice(0, 16);
+                formulario.lugar.value = evento.lugar;
+                formulario.cupoMaximo.value = evento.cupoMaximo;
+            } catch (e) {
+                alerta('main', 'danger', e.message);
+                return;
+            }
+        }
+
+        formulario.addEventListener('submit', async (evento) => {
+            evento.preventDefault();
+
+            const titulo = formulario.titulo.value.trim();
+            const lugar = formulario.lugar.value.trim();
+            const fechaHora = formulario.fechaHora.value;
+            const cupoMaximo = parseInt(formulario.cupoMaximo.value, 10);
+
+            if (titulo.length < 3) {
+                alerta('main', 'warning', 'El título es demasiado corto.');
+                return;
+            }
+            if (!lugar) {
+                alerta('main', 'warning', 'Indique el lugar del evento.');
+                return;
+            }
+            if (!fechaHora || new Date(fechaHora) <= new Date()) {
+                alerta('main', 'warning', 'La fecha del evento debe estar en el futuro.');
+                return;
+            }
+            if (!Number.isInteger(cupoMaximo) || cupoMaximo < 1) {
+                alerta('main', 'warning', 'El cupo máximo debe ser al menos 1.');
+                return;
+            }
+
+            const boton = formulario.querySelector('button[type="submit"]');
+            boton.disabled = true;
+            try {
+                const ruta = idEdicion
+                    ? `/api/organizador/eventos/${encodeURIComponent(idEdicion)}`
+                    : '/api/organizador/eventos';
+                await api(ruta, {
+                    method: 'POST',
+                    body: {
+                        titulo,
+                        descripcion: formulario.descripcion.value.trim(),
+                        fechaHora,
+                        lugar,
+                        cupoMaximo,
+                    },
+                });
+                window.location.href = '/eventos/mis-eventos.html';
+            } catch (e) {
+                alerta('main', 'danger', e.message);
+                boton.disabled = false;
+            }
+        });
+    })();
+}
+
 document.addEventListener('DOMContentLoaded', () => {
     iniciarListadoEventos();
     iniciarDetalleEvento();
+    iniciarMisEventos();
+    iniciarFormularioEvento();
 });
