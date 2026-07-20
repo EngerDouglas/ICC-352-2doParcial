@@ -7,11 +7,7 @@ un servidor estático simple.
 ## Cómo verlo funcionando
 
 El backend (API en Java) debe estar corriendo aparte en `http://localhost:7070`
-(lo corre quien trabaje en `../backend/` con `./gradlew run`).
-**Ahora mismo el backend todavía no arranca** — la lógica de negocio es un esqueleto
-sin implementar (ver `../backend/README.md`), así que las llamadas a la API van a
-fallar hasta que eso esté implementado. Mientras tanto puedes maquetar el HTML/CSS
-sin el backend corriendo. Con el backend levantado:
+(lo corre quien trabaje en `../backend/` con `./gradlew run`). Con eso levantado:
 
 **Opción 1 — abrir los archivos directo:** doble clic en `index.html` (o cualquier
 página dentro de `eventos/`, `auth/`, etc.) y se abre en el navegador. Suficiente
@@ -50,12 +46,12 @@ origen.
 - `asistencia/escaner.html` — escaneo de QR con la cámara (librería `html5-qrcode`).
 - `estadisticas/panel.html` — gráficos con Chart.js.
 - `admin/` — panel, usuarios, eventos (solo Administrador).
-- `css/estilos.css`, `js/*.js` — estáticos compartidos.
+- `css/estilos.css`, `js/config.js` (URL base de la API) y demás `js/*.js`
+  (un archivo por grupo de páginas) — estáticos compartidos.
 
 ## Estado actual
 
-Cada página es un esqueleto HTML con Bootstrap 5 (vía CDN) y comentarios
-`<!-- TODO -->` marcando dónde va el contenido dinámico. Cada archivo en `js/` tiene
-comentarios `// TODO:` indicando exactamente qué `fetch()` implementar y a qué
-endpoint del backend llamar. Ver el README raíz del proyecto para la lista completa
-de pendientes.
+Implementado y probado contra el backend real: login/registro con sesión por cookie,
+listado y detalle de eventos, inscripción y cancelación, confirmación con QR,
+formulario de creación/edición de eventos, escáner de asistencia, panel de
+estadísticas con Chart.js, y paneles de administración de usuarios y eventos.

@@ -31,7 +31,7 @@ public class Evento {
     @Column(nullable = false, length = 20)
     private EstadoEvento estado = EstadoEvento.BORRADOR;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "organizador_id", nullable = false)
     private Usuario organizador;
 

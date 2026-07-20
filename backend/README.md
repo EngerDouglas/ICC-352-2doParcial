@@ -17,6 +17,9 @@ es quien consume esta API.
 - **CORS**: habilitado (`config.bundledPlugins.enableCors`) con `allowCredentials`
   para que el frontend, corriendo en otro origen durante desarrollo, pueda mantener
   la sesión vía cookie.
+- **Errores**: cada excepción de negocio (`util/excepciones/`) se mapea a un código
+  HTTP en `Main.java` (`config.routes.exception(...)`) y responde JSON
+  `{ "exito": false, "mensaje": "..." }`.
 
 ## Cómo ejecutar en local
 
@@ -24,12 +27,9 @@ es quien consume esta API.
 ./gradlew run
 ```
 
-**Estado actual: esto todavía va a fallar al arrancar.** `Main.java` llama a
-`SeedInicial.ejecutar()` antes de levantar el servidor, y ese método (como el resto
-de la lógica de negocio) es un stub que lanza `UnsupportedOperationException` — ver
-"Estado actual" más abajo. Una vez implementado, la API arrancará en
-`http://localhost:7070/api/...` y en el primer arranque se creará automáticamente un
-usuario administrador (no eliminable, según `Usuario.noEliminable`).
+La API arranca en `http://localhost:7070/api/...`. En el primer arranque se crea
+automáticamente un usuario administrador (no eliminable):
+`admin@eventosacademicos.pucmm.edu.do` / `Admin123!` (ver `util/SeedInicial.java`).
 
 El servidor H2 en modo TCP queda escuchando en el puerto `9092`
 (`jdbc:h2:tcp://localhost:9092/eventosdb`, usuario `sa`, sin contraseña).
@@ -43,6 +43,10 @@ registrado. Todas bajo `/api`: `/api/auth/*`, `/api/eventos`, `/api/eventos/{id}
 
 ## Estado actual
 
-Esqueleto completo, compila (`./gradlew compileJava`), pero cada método de negocio
-lanza `UnsupportedOperationException("TODO: implementar")`. Ver el README raíz del
-proyecto para la lista de pendientes.
+Lógica de negocio implementada y verificada de punta a punta (login, registro,
+crear/publicar/cancelar eventos, inscripción con validación de cupo y duplicados,
+generación y escaneo de QR con rechazo de doble asistencia, estadísticas,
+administración de usuarios y eventos), incluyendo el build de Docker
+(`docker build ./backend`) y `docker compose up --build` completo con nginx.
+Pendiente: despliegue con dominio, IP pública y TLS real, y publicar la imagen en
+Docker Hub — ver el README raíz.

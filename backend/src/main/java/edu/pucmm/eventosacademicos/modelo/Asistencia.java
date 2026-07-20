@@ -11,14 +11,14 @@ public class Asistencia {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @OneToOne(fetch = FetchType.LAZY, optional = false)
+    @OneToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "inscripcion_id", nullable = false, unique = true)
     private Inscripcion inscripcion;
 
     @Column(name = "fecha_hora_escaneo", nullable = false)
     private LocalDateTime fechaHoraEscaneo;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "validado_por_id")
     private Usuario validadoPor;
 

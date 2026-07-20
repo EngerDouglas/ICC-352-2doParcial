@@ -26,6 +26,7 @@ dependencies {
     // API REST pura -- el frontend es estático e independiente (ver /frontend),
     // por eso no hay dependencia de un motor de plantillas (Thymeleaf, etc).
     implementation("io.javalin:javalin:7.2.2")
+    implementation("com.fasterxml.jackson.datatype:jackson-datatype-jsr310:2.15.2")
     implementation("org.slf4j:slf4j-simple:2.0.17")
 
     // ORM / JPA / Hibernate

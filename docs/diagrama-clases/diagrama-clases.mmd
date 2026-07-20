@@ -1,0 +1,64 @@
+classDiagram
+    class Usuario {
+        -Long id
+        -String nombreCompleto
+        -String email
+        -String passwordHash
+        -RolUsuario rol
+        -boolean bloqueado
+        -boolean noEliminable
+        -LocalDateTime fechaCreacion
+    }
+
+    class Evento {
+        -Long id
+        -String titulo
+        -String descripcion
+        -LocalDateTime fechaHora
+        -String lugar
+        -int cupoMaximo
+        -EstadoEvento estado
+        -LocalDateTime fechaCreacion
+        -LocalDateTime fechaActualizacion
+    }
+
+    class Inscripcion {
+        -Long id
+        -LocalDateTime fechaInscripcion
+        -EstadoInscripcion estado
+        -String tokenValidacionQr
+    }
+
+    class Asistencia {
+        -Long id
+        -LocalDateTime fechaHoraEscaneo
+    }
+
+    class RolUsuario {
+        <<enumeration>>
+        ADMINISTRADOR
+        ORGANIZADOR
+        PARTICIPANTE
+    }
+
+    class EstadoEvento {
+        <<enumeration>>
+        BORRADOR
+        PUBLICADO
+        CANCELADO
+    }
+
+    class EstadoInscripcion {
+        <<enumeration>>
+        ACTIVA
+        CANCELADA
+    }
+
+    Usuario "1" --> "0..*" Evento : organiza
+    Usuario "1" --> "0..*" Inscripcion : se inscribe
+    Evento "1" --> "0..*" Inscripcion : recibe
+    Inscripcion "1" --> "0..1" Asistencia : registra
+    Usuario "1" --> "0..*" Asistencia : valida (escanea)
+    Usuario ..> RolUsuario
+    Evento ..> EstadoEvento
+    Inscripcion ..> EstadoInscripcion

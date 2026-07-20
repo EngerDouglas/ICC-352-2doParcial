@@ -12,3 +12,5 @@ data/
 *.lock.db
 
 .env
+
+docker/nginx/certs/

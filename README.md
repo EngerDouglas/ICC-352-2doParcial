@@ -30,10 +30,24 @@ docker compose up --build
 Frontend en `https://localhost` (o el dominio configurado), API en
 `https://localhost/api/*` (nginx la enruta al backend).
 
-**Esto todavía no funciona de punta a punta** (ver "Estado actual" más abajo):
-el backend crashea al arrancar porque su lógica de negocio sigue sin implementar, y
-además falta `docker/nginx/certs/fullchain.pem` y `privkey.pem` (nginx no arranca sin
-esos certificados — ver el TODO de certificados TLS).
+Verificado localmente de punta a punta: build multi-stage del backend, `docker
+compose up --build` levantando `app` + `reverse-proxy`, redirección 80→443,
+frontend servido por nginx, y `/api/*` proxeado correctamente al backend.
+
+nginx **requiere** `docker/nginx/certs/fullchain.pem` y `privkey.pem` para arrancar
+(carpeta en `.gitignore`, no se versiona). Para la prueba local se generó un
+certificado autofirmado con:
+
+```bash
+openssl req -x509 -nodes -days 365 -newkey rsa:2048 \
+  -keyout docker/nginx/certs/privkey.pem \
+  -out docker/nginx/certs/fullchain.pem -subj "/CN=localhost"
+```
+
+Eso es **solo para desarrollo** (el navegador lo marca como no confiable). Para
+producción hace falta un certificado real (Let's Encrypt/ACME) sobre un dominio que
+apunte al servidor — eso requiere tener ya un servidor con IP pública y un dominio,
+que no existen todavía (ver pendientes abajo).
 
 ## Decisiones de versión (documentadas para el corrector)
 
@@ -53,20 +67,19 @@ esos certificados — ver el TODO de certificados TLS).
 
 ## Estado actual y próximos pasos
 
-Este commit contiene el **esqueleto completo** de ambas partes: modelo de datos,
-capas DAO/servicio/controlador con firmas y rutas ya definidas, páginas HTML base,
-y configuración de build/Docker. **No contiene lógica de negocio todavía** — cada
-método no trivial del backend lanza `UnsupportedOperationException("TODO: implementar")`,
-y cada archivo JS del frontend solo tiene comentarios `// TODO:`.
+Backend y frontend están implementados y funcionando end-to-end en local (probado con
+`curl` contra la API real): roles y sesión, alta/edición/publicación/cancelación de
+eventos, inscripción con validación de cupo y de duplicados, generación y escaneo de
+QR con rechazo de doble asistencia, estadísticas por evento, y administración de
+usuarios/eventos.
 
-Pendiente para la siguiente sesión de trabajo:
+El diagrama de clases del modelo implementado está en
+`docs/diagrama-clases/diagrama-clases.png`.
 
-- [ ] Backend: implementar los cuerpos de los métodos en `backend/.../dao/`,
-      `servicios/` y `controladores/`.
-- [ ] Frontend: lógica real de los archivos en `frontend/js/`.
-- [ ] Probar el build de Docker (`docker compose up --build`).
-- [ ] Provisionar certificados TLS reales para `docker/nginx/nginx.conf` y desplegar
-      en un servidor con IP pública.
-- [ ] Publicar la imagen del backend en Docker Hub.
-- [ ] Colocar el diagrama de clases en `docs/diagrama-clases/`.
+Pendiente — requiere infraestructura/cuentas que no están disponibles en este entorno:
+
+- [ ] Conseguir un servidor con IP pública y un dominio, provisionar un certificado
+      TLS real (Let's Encrypt/ACME) y desplegar ahí con `docker compose`.
+- [ ] Publicar la imagen del backend en Docker Hub (`docker login` con la cuenta del
+      equipo + `docker push`).
 # ICC-352-2doParcial
