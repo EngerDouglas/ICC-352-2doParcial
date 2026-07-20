@@ -5,6 +5,7 @@ import edu.pucmm.eventosacademicos.modelo.Usuario;
 import edu.pucmm.eventosacademicos.util.excepciones.AccesoNoAutorizadoException;
 import edu.pucmm.eventosacademicos.util.excepciones.UsuarioBloqueadoException;
 import io.javalin.http.Context;
+import io.javalin.http.HandlerType;
 
 public class FiltroAutenticacion {
 
@@ -12,6 +13,9 @@ public class FiltroAutenticacion {
     }
 
     public static void exigirAutenticacion(Context ctx) {
+        if (ctx.method() == HandlerType.OPTIONS) {
+            return;
+        }
         Usuario usuario = SessionUtil.usuarioActual(ctx);
         if (usuario == null) {
             throw new AccesoNoAutorizadoException("Debe iniciar sesión para acceder a este recurso.");
@@ -20,6 +24,9 @@ public class FiltroAutenticacion {
     }
 
     public static void exigirRol(Context ctx, RolUsuario... permitidos) {
+        if (ctx.method() == HandlerType.OPTIONS) {
+            return;
+        }
         exigirAutenticacion(ctx);
         Usuario usuario = SessionUtil.usuarioActual(ctx);
         for (RolUsuario rol : permitidos) {
